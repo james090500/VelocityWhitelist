@@ -107,8 +107,7 @@ public class CommandHandler {
     public int reload(CommandContext<CommandSource> commandSourceCommandContext) {
         Configs.loadConfigs(velocityWhitelist);
         CommandSource source = commandSourceCommandContext.getSource();
-        source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(velocityWhitelist.PREFIX + "Reloaded"));
-        velocityWhitelist.getLogger().info("VelocityGUI Reloaded");
+        source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&a" + velocityWhitelist.PREFIX + "Reloaded"));
         return 1;
     }
 }

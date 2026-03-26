@@ -1,15 +1,16 @@
 package com.james090500.VelocityWhitelist.helpers;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.james090500.VelocityWhitelist.VelocityWhitelist;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public record MinecraftApi(VelocityWhitelist velocityWhitelist) {
@@ -26,6 +27,7 @@ public record MinecraftApi(VelocityWhitelist velocityWhitelist) {
             return velocityWhitelist.getServer().getPlayer(username).get().getUniqueId();
         }
 
+        // Fallback to API
         JsonObject playerElement = getApiData(username);
         if (playerElement != null) {
             JsonElement playerUUID = playerElement.get("full_uuid");
@@ -33,7 +35,6 @@ public record MinecraftApi(VelocityWhitelist velocityWhitelist) {
                 return UUID.fromString(playerUUID.getAsString());
             }
         }
-
         return null;
     }
 
@@ -43,33 +44,30 @@ public record MinecraftApi(VelocityWhitelist velocityWhitelist) {
      * @param data The username/uuid to send
      * @return The response data
      */
-    private static JsonObject getApiData(String data) {
+    private JsonObject getApiData(String data) {
+        HttpURLConnection conn = null;
         try {
-            URL url = new URL("https://minecraftapi.net/api/v1/profile/" + data);
-            HttpURLConnection httpurlconnection = (HttpURLConnection) url.openConnection();
-            httpurlconnection.setDoInput(true);
-            httpurlconnection.setDoOutput(false);
-            httpurlconnection.connect();
+            URI uri = URI.create("https://api.minecraftapi.net/v3/profile/" + data + "?params=[full_uuid,name]");
 
-            if (httpurlconnection.getResponseCode() / 100 == 2) {
-                //Create reader
-                BufferedReader in = new BufferedReader(new InputStreamReader(httpurlconnection.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
+            conn = (HttpURLConnection) uri.toURL().openConnection();
+            conn.setRequestProperty("User-Agent", "velocitywhitelist/1.0.2-SNAPSHOT");
 
-                //Read response
-                while ((inputLine = in.readLine()) != null)
-                    response.append(inputLine);
+            int code = conn.getResponseCode();
+            InputStream stream = (code >= 200 && code < 300) ? conn.getInputStream() : conn.getErrorStream();
+            if (stream == null || code < 200 || code >= 300) return null;
 
-                //Convert response to JSON
-                return JsonParser.parseString(response.toString()).getAsJsonObject();
-            } else {
-                return null;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+                StringBuilder sb = new StringBuilder();
+                char[] buf = new char[2048];
+                int n;
+                while ((n = reader.read(buf)) != -1) sb.append(buf, 0, n);
+                return JsonParser.parseString(sb.toString()).getAsJsonObject();
             }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        } finally {
+            if (conn != null) conn.disconnect();
         }
     }
-
 }

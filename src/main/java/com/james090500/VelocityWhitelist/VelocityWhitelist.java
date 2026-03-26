@@ -18,16 +18,18 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-@Plugin(id = "velocitywhitelist", name = "VelocityWhitelist", version = "1.0.1-SNAPSHOT", description = "A Proxy based whitelist", authors = { "james095000" })
+@Plugin(id = "velocitywhitelist", name = "VelocityWhitelist", version = "Ï1.0.2-SNAPSHOT", description = "A Proxy based whitelist", authors = { "james095000" })
 public class VelocityWhitelist {
 
     public final String PREFIX = "[VelocityWhitelist] ";
+    @Getter private static VelocityWhitelist instance;
     @Getter private final ProxyServer server;
     @Getter private final Logger logger;
     @Getter private final Path dataDirectory;
 
     @Inject
     public VelocityWhitelist(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
+        VelocityWhitelist.instance = this;
         this.server = server;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
@@ -36,16 +38,12 @@ public class VelocityWhitelist {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         //Load configs
-        Configs.loadConfigs(this);
+        Configs.loadConfigs();
 
         //Register listeners
         server.getEventManager().register(this, new JoinListener());
 
-        //Setup command flow
-        final CommandHandler handler = new CommandHandler(this);
-        LiteralCommandNode<CommandSource> rootNode = LiteralArgumentBuilder.<CommandSource>literal("vwhitelist").build();
-
         //Register commands
-        CommandBuilder.register(this);
+        CommandBuilder.register();
     }
 }

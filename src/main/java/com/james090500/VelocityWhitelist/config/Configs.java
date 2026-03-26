@@ -21,6 +21,8 @@ import java.util.UUID;
 
 public class Configs {
 
+    private static final VelocityWhitelist velocityWhitelist = VelocityWhitelist.getInstance();
+
     @Getter private static Config config;
     @Getter private static Set<UUID> whitelist = new HashSet<>();
     private static Path configFile;
@@ -28,9 +30,8 @@ public class Configs {
 
     /**
      * Loads the config files.
-     * @param velocityWhitelist
      */
-    public static void loadConfigs(VelocityWhitelist velocityWhitelist) {
+    public static void loadConfigs() {
         configFile = Path.of(velocityWhitelist.getDataDirectory() + "/config.toml");
         whitelistFile = Path.of(velocityWhitelist.getDataDirectory() + "/whitelist.json");
 
@@ -100,13 +101,5 @@ public class Configs {
         private boolean enabled;
         @Getter
         private String message;
-
-        @Override
-        public String toString() {
-            return "Panel{" +
-                "enabled='" + enabled + '\'' +
-                ", message='" + message + '\'' +
-            '}';
-        }
     }
 }

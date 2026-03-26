@@ -17,15 +17,14 @@ import java.util.concurrent.CompletableFuture;
 public class CommandBuilder {
 
     private static ProxyServer server;
+    private static final CommandHandler handler = new CommandHandler();
 
     /**
      * Reginster all commands
-     * @param velocityWhitelist
      */
-    public static void register(VelocityWhitelist velocityWhitelist) {
-        server = velocityWhitelist.getServer();
+    public static void register() {
+        server = VelocityWhitelist.getInstance().getServer();
         //Setup command flow
-        final CommandHandler handler = new CommandHandler(velocityWhitelist);
         server.getCommandManager().register(server.getCommandManager().metaBuilder("vwhitelist").build(), new BrigadierCommand(
                 LiteralArgumentBuilder.<CommandSource>literal("vwhitelist").requires(sender -> sender.hasPermission("vwhitelist.admin")).executes(handler::about)
                         .then(LiteralArgumentBuilder.<CommandSource>literal("on").executes(handler::turnOn))

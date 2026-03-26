@@ -24,7 +24,11 @@ public class WhitelistHelper {
      * @return If player is whitelisted or has bypass
      */
     public static boolean check(Player player) {
-        return player.hasPermission("vwhitelist.bypass") ? true : Configs.getWhitelist().contains(player.getUniqueId());
+        if(player.hasPermission("vwhitelist.bypass")) {
+            return true;
+        } else {
+            return Configs.getWhitelist().contains(player.getUniqueId());
+        }
     }
 
     /**

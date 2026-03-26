@@ -10,11 +10,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class CommandHandler {
 
-    private VelocityWhitelist velocityWhitelist;
-
-    public CommandHandler(VelocityWhitelist velocityWhitelist) {
-        this.velocityWhitelist = velocityWhitelist;
-    }
+    private final VelocityWhitelist velocityWhitelist = VelocityWhitelist.getInstance();
 
     /**
      * A bit of basic about information
@@ -105,7 +101,7 @@ public class CommandHandler {
      * @return
      */
     public int reload(CommandContext<CommandSource> commandSourceCommandContext) {
-        Configs.loadConfigs(velocityWhitelist);
+        Configs.loadConfigs();
         CommandSource source = commandSourceCommandContext.getSource();
         source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&a" + velocityWhitelist.PREFIX + "Reloaded"));
         return 1;

@@ -10,6 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -18,7 +19,16 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-@Plugin(id = "velocitywhitelist", name = "VelocityWhitelist", version = "Ï1.0.2-SNAPSHOT", description = "A Proxy based whitelist", authors = { "james095000" })
+@Plugin(
+        id = "velocitywhitelist",
+        name = "VelocityWhitelist",
+        version = "1.0.3-SNAPSHOT",
+        description = "A Proxy based whitelist",
+        authors = { "james095000" },
+        dependencies = {
+            @Dependency(id = "floodgate")
+        }
+  )
 public class VelocityWhitelist {
 
     public final String PREFIX = "[VelocityWhitelist] ";

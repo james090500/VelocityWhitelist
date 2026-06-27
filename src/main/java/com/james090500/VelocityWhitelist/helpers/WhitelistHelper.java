@@ -36,8 +36,7 @@ public class WhitelistHelper {
      * @param username
      */
     public void add(String username) {
-        velocityWhitelist.getServer().getScheduler().buildTask(velocityWhitelist, () -> {
-            UUID uuid = new MinecraftApi(velocityWhitelist).getUUID(username);
+        MinecraftApi.getUUID(username).thenAccept(uuid -> {
             if(uuid == null) {
                 source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&c" + velocityWhitelist.PREFIX + username + " is not a valid username"));
             } else if(Configs.getWhitelist().contains(uuid)) {
@@ -47,7 +46,7 @@ public class WhitelistHelper {
                 Configs.saveWhitelist(velocityWhitelist);
                 source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&a" + velocityWhitelist.PREFIX + username + " has been added to the whitelist"));
             }
-        }).schedule();
+        });
     }
 
     /**
@@ -55,18 +54,17 @@ public class WhitelistHelper {
      * @param username
      */
     public void remove(String username) {
-        velocityWhitelist.getServer().getScheduler().buildTask(velocityWhitelist, () -> {
-            UUID uuid = new MinecraftApi(velocityWhitelist).getUUID(username);
-            if(uuid == null) {
+        MinecraftApi.getUUID(username).thenAccept(uuid -> {
+            if (uuid == null) {
                 source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&c" + velocityWhitelist.PREFIX + username + " is not a valid username"));
-            } else if(!Configs.getWhitelist().contains(uuid)) {
+            } else if (!Configs.getWhitelist().contains(uuid)) {
                 source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&a" + velocityWhitelist.PREFIX + username + " is not in the whitelist"));
             } else {
                 Configs.getWhitelist().remove(uuid);
                 Configs.saveWhitelist(velocityWhitelist);
                 source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize("&a" + velocityWhitelist.PREFIX + username + " has been removed from the whitelist"));
             }
-        }).schedule();
+        });
     }
 
 }

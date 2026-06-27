@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.james090500.VelocityWhitelist'
-version = '1.0.2-SNAPSHOT'
+version = '1.0.3-SNAPSHOT'
 description = 'VelocityWhitelist'
 
 repositories {
@@ -13,9 +13,13 @@ repositories {
         name = 'papermc'
         url = 'https://repo.papermc.io/repository/maven-public/'
     }
+    maven {
+        url = uri("https://repo.opencollab.dev/main/")
+    }
 }
 
 dependencies {
+    compileOnly 'org.geysermc.floodgate:api:2.2.5-SNAPSHOT'
     compileOnly 'com.velocitypowered:velocity-api:3.5.0-SNAPSHOT'
     annotationProcessor 'com.velocitypowered:velocity-api:3.5.0-SNAPSHOT'
 }

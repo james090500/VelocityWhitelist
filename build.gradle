@@ -1,11 +1,11 @@
 plugins {
     id 'java'
-    id("io.freefair.lombok") version "9.2.0"
-    id("xyz.jpenilla.run-velocity") version "3.0.2"
+    id("io.freefair.lombok") version "9.5.0"
+    id("xyz.jpenilla.run-velocity") version "3.1.0"
 }
 
 group = 'com.james090500.VelocityWhitelist'
-version = '1.0.3-SNAPSHOT'
+version = '1.0.4-SNAPSHOT'
 description = 'VelocityWhitelist'
 
 repositories {
@@ -14,18 +14,20 @@ repositories {
         url = 'https://repo.papermc.io/repository/maven-public/'
     }
     maven {
-        url = uri("https://repo.opencollab.dev/main/")
+        name = "opencollabRepositoryMain"
+        url = uri("https://repo.opencollab.dev/main")
     }
 }
 
 dependencies {
+    compileOnly 'com.velocitypowered:velocity-api:4.2.1-SNAPSHOT'
+    annotationProcessor 'com.velocitypowered:velocity-api:4.2.1-SNAPSHOT'
+
     compileOnly 'org.geysermc.floodgate:api:2.2.5-SNAPSHOT'
-    compileOnly 'com.velocitypowered:velocity-api:3.5.0-SNAPSHOT'
-    annotationProcessor 'com.velocitypowered:velocity-api:3.5.0-SNAPSHOT'
 }
 
 tasks {
     runVelocity {
-        velocityVersion("3.5.0-SNAPSHOT")
+        velocityVersion("4.2.1-SNAPSHOT")
     }
 }

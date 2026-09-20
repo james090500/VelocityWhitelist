@@ -22,11 +22,11 @@ import java.nio.file.Path;
 @Plugin(
         id = "velocitywhitelist",
         name = "VelocityWhitelist",
-        version = "1.0.3-SNAPSHOT",
+        version = "1.0.4-SNAPSHOT",
         description = "A Proxy based whitelist",
         authors = { "james095000" },
         dependencies = {
-            @Dependency(id = "floodgate")
+            @Dependency(id = "floodgate", optional = true)
         }
   )
 public class VelocityWhitelist {

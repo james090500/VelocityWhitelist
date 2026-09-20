@@ -24,27 +24,32 @@ public record MinecraftApi() {
      * @return Players uuid
      */
     public static CompletableFuture<UUID> getUUID(String username) {
-        //Try get online player first
+        //Try to get online player first
         if (VelocityWhitelist.getInstance().getServer().getPlayer(username).isPresent()) {
             return CompletableFuture.supplyAsync(() -> VelocityWhitelist.getInstance().getServer().getPlayer(username).get().getUniqueId());
         }
 
-        if(username.startsWith(".")) {
+        // Try floodgate (if installed)
+        if(VelocityWhitelist.getInstance().getServer().getPluginManager().isLoaded("floodgate")) {
             FloodgateApi api = FloodgateApi.getInstance();
-            return api.getUuidFor(username.replace(".", ""));
-        } else {
-            // Fallback to API
-            return CompletableFuture.supplyAsync(() -> {
-                JsonObject playerElement = getApiData(username);
-                if (playerElement != null) {
-                    JsonElement playerUUID = playerElement.get("full_uuid");
-                    if (playerUUID != null && !playerUUID.isJsonNull()) {
-                        return UUID.fromString(playerUUID.getAsString());
-                    }
-                }
-                return  null;
-            });
+            if(username.startsWith(api.getPlayerPrefix())) {
+                return api.getUuidFor(username.replace(".", ""));
+            } else {
+                return null;
+            }
         }
+
+        // Fallback to API
+        return CompletableFuture.supplyAsync(() -> {
+            JsonObject playerElement = getApiData(username);
+            if (playerElement != null) {
+                JsonElement playerUUID = playerElement.get("full_uuid");
+                if (playerUUID != null && !playerUUID.isJsonNull()) {
+                    return UUID.fromString(playerUUID.getAsString());
+                }
+            }
+            return  null;
+        });
     }
 
     /**
@@ -59,7 +64,7 @@ public record MinecraftApi() {
             URI uri = URI.create("https://api.minecraftapi.net/v3/profile/" + data + "?params=[full_uuid,name]");
 
             conn = (HttpURLConnection) uri.toURL().openConnection();
-            conn.setRequestProperty("User-Agent", "velocitywhitelist/1.0.3-SNAPSHOT");
+            conn.setRequestProperty("User-Agent", "velocitywhitelist/1.0.4-SNAPSHOT");
 
             int code = conn.getResponseCode();
             InputStream stream = (code >= 200 && code < 300) ? conn.getInputStream() : conn.getErrorStream();
